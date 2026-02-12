@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day card</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&family=Petemoss&family=Roboto:ital,wght@0,100..900;1,100..900&family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="bg3D"></div>
+    <div class="envelope">
+        <div class="envelope-lid"></div>
+        <div class="envelope-lid envelope-lid-secondary"></div>
+        <div class="card-wrapper">
+            <div class="card">
+                <div class="card-cover">
+                    <div class="card-side card-side-primary">
+                        <h1 class="card-title">
+                            <span class="card-title-secondary">Happy</span>
+                            <span class="card-title-main">Maëvah <span
+                                    class="card-title-apostrophe">❤️</span>s</span>
+                            <span class="card-title-secondary">Day</span>
+                        </h1>
+                    </div>
+                    <div class="card-side card-side-secondary"></div>
+                </div>
+                <div class="card-body">
+                    <p>Maëvah,</p>
+                    <p>Chaque jour à tes côtés est une fête pour mon cœur. Ton sourire, ta voix, la façon dont tu rends chaque instant lumineux… tout en toi rend la vie plus belle. Je n’ai pas besoin d’un jour spécial pour te dire combien je t’aime, car mon amour pour toi se vit à chaque seconde.<br> Merci d’être toi, et de rendre chaque jour extraordinaire simplement en étant à mes côtés.
+                    </p>
+                    <p>Avec tout mon amour, <br> Harly</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="heart-seal"></div> </div>
+
+       <script  src="./script.js"></script>
+       
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+<script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
+
+<script>
+// SCENE
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth/window.innerHeight,
+    0.1,
+    1000
+);
+
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById("bg3D").appendChild(renderer.domElement);
+
+camera.position.z = 30;
+
+// LIGHT
+const light = new THREE.PointLight(0xff0055, 2, 100);
+light.position.set(10,10,10);
+scene.add(light);
+
+// TEXT
+const loader = new THREE.FontLoader();
+loader.load(
+'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+function(font){
+
+    for(let i=0; i<40; i++){
+
+        const geometry = new THREE.TextGeometry("Je t'aime", {
+            font: font,
+            size: 1.2,
+            height: 0.3,
+        });
+
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xff3366,
+            emissive: 0x550022
+        });
+
+        const text = new THREE.Mesh(geometry, material);
+
+        text.position.x = (Math.random() - 0.5) * 60;
+        text.position.y = (Math.random() - 0.5) * 40;
+        text.position.z = (Math.random() - 0.5) * 60;
+
+        text.rotation.x = Math.random() * Math.PI;
+        text.rotation.y = Math.random() * Math.PI;
+
+        scene.add(text);
+    }
+});
+
+function animate(){
+    requestAnimationFrame(animate);
+    scene.rotation.y += 0.002;
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', function(){
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+<button class="back-btn" onclick="location.href='index.html'">
+    ⬅ Retour ❤️
+</button>
+
+</body>
+</html>
