@@ -2,8 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pour Toi ❤️</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script&family=Parisienne&display=swap" rel="stylesheet">
+
 <style>
 body {
     margin: 0;
@@ -16,32 +19,42 @@ body {
 
 #overlay {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
     z-index: 10;
     perspective: 1000px;
+    width: 90%;
+    max-width: 400px;
 }
+
+/* TITRE */
+
 #overlay h1 {
     font-family: 'Parisienne', cursive;
     color: #ffffff;
     text-shadow: 2px 2px 10px rgba(255,0,100,0.5);
+    font-size: 36px;
+    margin-top: 15px;
 }
+
+/* TEXTE */
 
 #overlay p {
     font-family: 'Great Vibes', cursive;
     color: #fff5f5;
     text-shadow: 1px 1px 8px rgba(255,0,120,0.3);
+    font-size: 20px;
 }
 
-
-/* IMAGE 3D */
+/* IMAGE 3D RESPONSIVE */
 
 .image-container {
-    width: 320px;
-    height: 400px;
+    width: 90vw;
+    max-width: 320px;
+    aspect-ratio: 4 / 5;
     margin: auto;
     position: relative;
     transform-style: preserve-3d;
@@ -56,7 +69,7 @@ body {
     box-shadow: 0 30px 80px rgba(255,0,120,0.6);
 }
 
-/* REFLET LUMIERE */
+/* REFLET */
 
 .image-container::after {
     content: "";
@@ -79,16 +92,7 @@ body {
     left: 130%;
 }
 
-h1 {
-    margin-top: 0px;
-    font-size: 32px;
-    letter-spacing: 2px;
-}
-
-p {
-    font-size: 18px;
-    opacity: 0.9;
-}
+/* BOUTON */
 
 button {
     margin-top: 20px;
@@ -105,6 +109,30 @@ button {
 button:hover {
     transform: scale(1.1);
 }
+
+/* MOBILE OPTIMISATION */
+
+@media (max-width: 768px) {
+
+    #overlay {
+        top: 50%;
+    }
+
+    #overlay h1 {
+        font-size: 26px;
+    }
+
+    #overlay p {
+        font-size: 18px;
+        padding: 0 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px 22px;
+    }
+
+}
 </style>
 </head>
 
@@ -115,15 +143,19 @@ button:hover {
     <div class="image-container" id="photo3D">
         <img src="photoo.png">
     </div>
-<h1>Bienvenue mon amour ❤️</h1>
+
+    <h1>Bienvenue mon amour ❤️</h1>
     <p>Ce site a été créé spécialement pour toi…</p>
- <button onclick="location.href='page2.html'">
+
+    <button onclick="location.href='page2.html'">
         Découvrir 💖
     </button>
 
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+<script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
 // ================== THREE JS SCENE ==================
@@ -140,24 +172,26 @@ const renderer = new THREE.WebGLRenderer({alpha:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.z = 30;
+camera.position.z = window.innerWidth < 768 ? 40 : 30;
 
-// LUMIERE
+// LIGHT
 const light = new THREE.PointLight(0xff0055, 2, 100);
 light.position.set(10,10,10);
 scene.add(light);
 
-// TEXTE "Je t'aime"
+// REDUIRE LE NOMBRE SUR MOBILE
+let count = window.innerWidth < 768 ? 20 : 40;
+
 const loader = new THREE.FontLoader();
 loader.load(
 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
 function(font){
 
-    for(let i=0; i<40; i++){
+    for(let i=0; i<count; i++){
 
         const geometry = new THREE.TextGeometry("Je t'aime", {
             font: font,
-            size: 1.2,
+            size: 1,
             height: 0.3,
         });
 
@@ -172,14 +206,11 @@ function(font){
         text.position.y = (Math.random() - 0.5) * 40;
         text.position.z = (Math.random() - 0.5) * 60;
 
-        text.rotation.x = Math.random() * Math.PI;
-        text.rotation.y = Math.random() * Math.PI;
-
         scene.add(text);
     }
 });
 
-// ANIMATION SCENE
+// ANIMATION
 function animate(){
     requestAnimationFrame(animate);
     scene.rotation.y += 0.002;
@@ -194,22 +225,25 @@ window.addEventListener('resize', function(){
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ================== IMAGE 3D EFFECT ==================
+// IMAGE 3D (DESACTIVE MOUSE SUR MOBILE)
 
 const photo = document.getElementById("photo3D");
 
-document.addEventListener("mousemove", (e) => {
-    let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-    let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+if (window.innerWidth > 768) {
+    document.addEventListener("mousemove", (e) => {
+        let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+        let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
 
-    photo.style.transform = `
-        rotateY(${xAxis}deg)
-        rotateX(${yAxis}deg)
-        translateZ(20px)
-    `;
-});
+        photo.style.transform = `
+            rotateY(${xAxis}deg)
+            rotateX(${yAxis}deg)
+            translateZ(20px)
+        `;
+    });
+}
 
-// Effet flottant automatique
+// FLOTTEMENT AUTOMATIQUE (MOBILE + DESKTOP)
+
 let floatAngle = 0;
 function floatEffect(){
     floatAngle += 0.02;
